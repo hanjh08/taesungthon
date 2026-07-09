@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>태성고 분실물 센터</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="brand">
+          <span class="brand-icon" aria-hidden="true">📦</span>
+          <div>
+            <h1>태성고 분실물 센터</h1>
+            <p>태성고등학교</p>
+          </div>
+        </div>
+        <button class="login-button" type="button">로그인</button>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="stats-card" aria-label="분실물 통계">
+        <div class="stat-item">
+          <strong id="total-count">0</strong>
+          <span>전체 등록</span>
+        </div>
+        <div class="stat-item">
+          <strong class="lost" id="lost-count">0</strong>
+          <span>찾는 중 (분실)</span>
+        </div>
+        <div class="stat-item">
+          <strong class="found" id="found-count">0</strong>
+          <span>습득 보관 중</span>
+        </div>
+        <div class="stat-item">
+          <strong class="resolved" id="resolved-count">0</strong>
+          <span>해결됨</span>
+        </div>
+      </section>
+
+      <section class="filter-card" aria-label="분실물 검색 필터">
+        <div class="tabs">
+          <button class="tab active" type="button" data-type-filter="all">전체</button>
+          <button class="tab" type="button" data-type-filter="lost">분실물</button>
+          <button class="tab" type="button" data-type-filter="found">습득물</button>
+        </div>
+
+        <div class="filter-row">
+          <label class="sr-only" for="category">카테고리</label>
+          <select id="category" class="select-box">
+            <option>모든 카테고리</option>
+            <option>전자기기</option>
+            <option>가방/지갑</option>
+            <option>의류</option>
+            <option>문구류</option>
+            <option>스포츠용품</option>
+            <option>기타</option>
+          </select>
+
+          <div class="status-toggle" role="group" aria-label="상태 필터">
+            <button class="toggle active" type="button" data-status-filter="active">진행 중</button>
+            <button class="toggle" type="button" data-status-filter="all">전체</button>
+            <button class="toggle" type="button" data-status-filter="resolved">해결됨</button>
+          </div>
+
+          <label class="sr-only" for="search">검색</label>
+          <input id="search" class="search-input" type="search" placeholder="물품명, 장소로 검색...">
+        </div>
+      </section>
+
+      <div class="register-toolbar">
+        <button class="primary-button open-register" type="button">등록하기</button>
+      </div>
+
+      <section class="items-grid" id="items-grid" aria-label="등록된 분실물 목록"></section>
+
+      <section class="empty-state" id="empty-state" aria-label="등록된 항목 없음">
+        <div class="empty-icon" aria-hidden="true">🔍</div>
+        <h2>등록된 항목이 없습니다</h2>
+        <p>검색 조건을 변경하거나 새로운 분실물을 등록해보세요.</p>
+        <button class="primary-button open-register" type="button">등록하기</button>
+      </section>
+    </main>
+
+  </div>
+
+  <div class="modal-backdrop" id="register-modal" aria-hidden="true">
+    <section class="register-sheet" role="dialog" aria-modal="true" aria-labelledby="register-title">
+      <div class="sheet-header">
+        <h2 id="register-title">분실물 / 습득물 등록</h2>
+        <button class="close-button" type="button" aria-label="닫기">×</button>
+      </div>
+
+      <form class="register-form" id="register-form">
+        <fieldset class="type-field">
+          <legend>유형 *</legend>
+          <label class="type-card type-lost active">
+            <input type="radio" name="type" value="lost" checked>
+            <span class="type-icon">😢</span>
+            <strong>분실물</strong>
+            <span>내가 잃어버렸어요</span>
+          </label>
+          <label class="type-card type-found">
+            <input type="radio" name="type" value="found">
+            <span class="type-icon">🙌</span>
+            <strong>습득물</strong>
+            <span>내가 주웠어요</span>
+          </label>
+        </fieldset>
+
+        <div class="form-group">
+          <label>사진 (선택)</label>
+          <label class="photo-upload" for="item-photo">
+            <input id="item-photo" type="file" accept="image/*">
+            <img id="photo-preview" alt="업로드한 사진 미리보기">
+            <span class="upload-empty">
+              <span class="upload-icon">📷</span>
+              <strong>사진을 올려주세요</strong>
+              <small>클릭해서 추가</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label for="item-name">물품명 *</label>
+          <input id="item-name" name="name" type="text" maxlength="50" required>
+          <span class="char-count"><span id="name-count">0</span>/50</span>
+        </div>
+
+        <div class="form-group">
+          <label for="item-category">카테고리</label>
+          <select id="item-category" name="category">
+            <option>기타</option>
+            <option>전자기기</option>
+            <option>가방/지갑</option>
+            <option>의류</option>
+            <option>문구류</option>
+            <option>스포츠용품</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="item-location" id="location-label">분실 위치 *</label>
+          <input id="item-location" name="location" type="text" maxlength="50" required>
+          <span class="char-count"><span id="location-count">0</span>/50</span>
+        </div>
+
+        <div class="form-group">
+          <label for="item-date">날짜 *</label>
+          <input id="item-date" name="date" type="date" required>
+        </div>
+
+        <div class="form-group">
+          <label for="storage-location">현재 보관 위치 *</label>
+          <input id="storage-location" name="storage" type="text" required>
+        </div>
+
+        <div class="form-group">
+          <label for="item-description">설명</label>
+          <textarea id="item-description" name="description" rows="4" placeholder="색상, 특징, 내용물을 적어주세요."></textarea>
+        </div>
+
+        <button class="submit-button" type="submit">등록하기</button>
+      </form>
+    </section>
+  </div>
+
+  <div class="detail-backdrop" id="detail-modal" aria-hidden="true">
+    <section class="detail-dialog" role="dialog" aria-modal="true" aria-labelledby="detail-title">
+      <div class="detail-header">
+        <div class="detail-badges">
+          <span class="detail-type-badge" id="detail-type">습득물</span>
+          <span class="detail-status-badge">진행 중</span>
+        </div>
+        <button class="detail-close" type="button" aria-label="닫기">×</button>
+      </div>
+
+      <div class="detail-content">
+        <img class="detail-image" id="detail-image" src="" alt="">
+
+        <div class="detail-title-row">
+          <h2 id="detail-title">물품명</h2>
+          <span class="detail-views">👁 14</span>
+        </div>
+
+        <dl class="detail-info">
+          <div>
+            <dt><span class="line-icon icon-tag" aria-hidden="true"></span><span>카테고리</span></dt>
+            <dd id="detail-category">기타</dd>
+          </div>
+          <div>
+            <dt><span class="line-icon icon-pin" aria-hidden="true"></span><span id="detail-location-label">위치</span></dt>
+            <dd id="detail-location">-</dd>
+          </div>
+          <div>
+            <dt><span class="line-icon icon-calendar" aria-hidden="true"></span><span>날짜</span></dt>
+            <dd id="detail-date">-</dd>
+          </div>
+          <div>
+            <dt><span class="line-icon icon-box" aria-hidden="true"></span><span>현재 보관 위치</span></dt>
+            <dd id="detail-storage">-</dd>
+          </div>
+          <div>
+            <dt><span class="line-icon icon-user" aria-hidden="true"></span><span>작성자</span></dt>
+            <dd>태성고 학생</dd>
+          </div>
+          <div>
+            <dt><span class="line-icon icon-clock" aria-hidden="true"></span><span>작성일시</span></dt>
+            <dd id="detail-created">-</dd>
+          </div>
+        </dl>
+
+        <section class="detail-description">
+          <h3>상세 설명</h3>
+          <p id="detail-description">등록된 설명이 없습니다.</p>
+        </section>
+      </div>
+
+      <div class="detail-footer">
+        <button class="detail-close-button" type="button">닫기</button>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
