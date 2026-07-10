@@ -290,9 +290,11 @@ function updateTypeCards() {
 }
 
 function updateCounts() {
+  const activeItems = items.filter((item) => (item.status || "active") !== "resolved");
+
   totalCount.textContent = items.length;
-  lostCount.textContent = items.filter((item) => item.type === "lost").length;
-  foundCount.textContent = items.filter((item) => item.type === "found").length;
+  lostCount.textContent = activeItems.filter((item) => item.type === "lost").length;
+  foundCount.textContent = activeItems.filter((item) => item.type === "found").length;
   resolvedCount.textContent = items.filter((item) => item.status === "resolved").length;
 }
 
